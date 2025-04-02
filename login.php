@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // ✅ Database Connection
-$conn = new mysqli("localhost", "root", "", "accounts");
+$conn = new mysqli("tramway.proxy.rlwy.net", "root", "UjKxiGoBsHYBQMLRNjwPTMvFVFrTVLqk", "railway", 23857);
 
 if ($conn->connect_error) {
     echo json_encode(['status' => 'error', 'message' => 'Connection failed: ' . $conn->connect_error]);
