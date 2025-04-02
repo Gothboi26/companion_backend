@@ -4,10 +4,10 @@ header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json; charset=UTF-8");
 
-$host = 'localhost';
-$dbname = 'accounts';
-$username = 'root';
-$password = '';
+
+$dsn = "mysql:host=tramway.proxy.rlwy.net;port=23857;dbname=railway";
+$username = "root";
+$password = "UjKxiGoBsHYBQMLRNjwPTMvFVFrTVLqk";
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
