@@ -6,10 +6,11 @@ header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json; charset=UTF-8");
 
 // Database configuration
-$servername = "localhost";
+$servername = "tramway.proxy.rlwy.net";
 $username = "root";
-$password = "";
-$dbname = "accounts;
+$password = "UjKxiGoBsHYBQMLRNjwPTMvFVFrTVLqk";
+$dbname = "railway";
+$port = 23857;
 
 // Establish database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
