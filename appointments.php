@@ -19,9 +19,12 @@ if (!isset($_SESSION['user_id'])) {
     echo json_encode(['error' => 'Unauthorized access']);
     exit();
 }
+// Database connection
+$dsn = "mysql:host=tramway.proxy.rlwy.net;port=23857;dbname=railway";
+$username = "root";
+$password = "UjKxiGoBsHYBQMLRNjwPTMvFVFrTVLqk";
 
-// DB connection
-$pdo = new PDO("mysql:host=localhost;dbname=accounts", "root", "");
+$pdo = new PDO($dsn, $username, $password);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 function fetchAppointments($pdo, $user_id, $role) {
