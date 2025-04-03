@@ -20,6 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
+// ✅ Check if script reaches this point
+echo json_encode(['debug' => 'Script reached after CORS setup']);
+ob_flush();
+flush(); // Force sending output to check if we get a response
+sleep(1);
+
 // ✅ Database Connection
 $conn = new mysqli("tramway.proxy.rlwy.net", "root", "UjKxiGoBsHYBQMLRNjwPTMvFVFrTVLqk", "railway", 23857);
 
@@ -29,24 +35,26 @@ if ($conn->connect_error) {
     exit();
 }
 
-// ✅ Add default admin if not exists
-$default_username = "admin";
-$default_password = password_hash("admin123", PASSWORD_DEFAULT);
-$default_role = "admin";
-
-$sql = "INSERT IGNORE INTO users (username, password, role) VALUES (?, ?, ?)";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("sss", $default_username, $default_password, $default_role);
-$stmt->execute();
-$stmt->close();
+// ✅ Check if script reaches here
+echo json_encode(['debug' => 'Connected to DB']);
+ob_flush();
+flush();
+sleep(1);
 
 // ✅ Get request data
 $rawData = file_get_contents("php://input");
+
 if (!$rawData) {
     http_response_code(400);
     echo json_encode(['status' => 'error', 'message' => 'Empty request body']);
     exit();
 }
+
+// ✅ Debug raw data received
+echo json_encode(['debug' => 'Raw Data Received', 'rawData' => $rawData]);
+ob_flush();
+flush();
+sleep(1);
 
 $data = json_decode($rawData, true);
 if (!isset($data['username']) || !isset($data['password'])) {
@@ -54,6 +62,12 @@ if (!isset($data['username']) || !isset($data['password'])) {
     echo json_encode(['status' => 'error', 'message' => 'Missing username or password']);
     exit();
 }
+
+// ✅ Debug Parsed Data
+echo json_encode(['debug' => 'Parsed JSON Data', 'data' => $data]);
+ob_flush();
+flush();
+sleep(1);
 
 $username = $data['username'];
 $password = $data['password'];
@@ -65,6 +79,12 @@ $stmt->bind_param("s", $username);
 $stmt->execute();
 $stmt->store_result();
 $stmt->bind_result($user_id, $hashed_password, $role);
+
+// ✅ Debug SQL Execution
+echo json_encode(['debug' => 'SQL Query Executed']);
+ob_flush();
+flush();
+sleep(1);
 
 if ($stmt->num_rows > 0 && $stmt->fetch() && password_verify($password, $hashed_password)) {
     session_regenerate_id(true);
