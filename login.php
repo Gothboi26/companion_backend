@@ -1,5 +1,5 @@
 <?php
-session_start(); // Start the session
+session_start();
 
 // ✅ CORS setup for localhost:3000
 header("Access-Control-Allow-Origin: https://seniorcare-flt3.onrender.com");
@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $conn = new mysqli("tramway.proxy.rlwy.net", "root", "UjKxiGoBsHYBQMLRNjwPTMvFVFrTVLqk", "railway", 23857);
 
 if ($conn->connect_error) {
+    http_response_code(500);
     echo json_encode(['status' => 'error', 'message' => 'Connection failed: ' . $conn->connect_error]);
     exit();
 }
@@ -34,9 +35,16 @@ $stmt->execute();
 $stmt->close();
 
 // ✅ Get request data
-$data = json_decode(file_get_contents("php://input"), true);
+$rawData = file_get_contents("php://input");
+if (!$rawData) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Empty request body']);
+    exit();
+}
 
+$data = json_decode($rawData, true);
 if (!isset($data['username']) || !isset($data['password'])) {
+    http_response_code(400);
     echo json_encode(['status' => 'error', 'message' => 'Missing username or password']);
     exit();
 }
@@ -49,9 +57,10 @@ $sql = "SELECT id, password, role FROM users WHERE username = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $username);
 $stmt->execute();
+$stmt->store_result();
 $stmt->bind_result($user_id, $hashed_password, $role);
 
-if ($stmt->fetch() && password_verify($password, $hashed_password)) {
+if ($stmt->num_rows > 0 && $stmt->fetch() && password_verify($password, $hashed_password)) {
     session_regenerate_id(true);
     $_SESSION['user_id'] = $user_id;
     $_SESSION['username'] = $username;
@@ -59,14 +68,19 @@ if ($stmt->fetch() && password_verify($password, $hashed_password)) {
 
     session_write_close();
 
+    http_response_code(200);
     echo json_encode([
         'status' => 'success',
         'role' => $role,
         'message' => 'Login successful',
     ]);
 } else {
+    http_response_code(401);
     echo json_encode(['status' => 'error', 'message' => 'Invalid credentials']);
 }
+
+// ✅ Ensure content length is sent
+header("Content-Length: " . ob_get_length());
 
 $stmt->close();
 $conn->close();
