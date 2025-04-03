@@ -1,8 +1,14 @@
 <?php
 session_start();
+ob_start(); // Start output buffering
 
-// ✅ CORS setup for localhost:3000
-header("Access-Control-Allow-Origin: https://seniorcare-flt3.onrender.com");
+// ✅ Enable PHP Error Reporting
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// ✅ CORS setup (Temporarily allowing all origins for debugging)
+header("Access-Control-Allow-Origin: *"); // Change to specific origin later
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -19,7 +25,7 @@ $conn = new mysqli("tramway.proxy.rlwy.net", "root", "UjKxiGoBsHYBQMLRNjwPTMvFVF
 
 if ($conn->connect_error) {
     http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => 'Connection failed: ' . $conn->connect_error]);
+    echo json_encode(['status' => 'error', 'message' => 'Database connection failed: ' . $conn->connect_error]);
     exit();
 }
 
@@ -84,4 +90,5 @@ header("Content-Length: " . ob_get_length());
 
 $stmt->close();
 $conn->close();
+ob_end_flush(); // Flush output buffer
 ?>
