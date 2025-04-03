@@ -8,7 +8,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // ✅ CORS setup (Temporarily allowing all origins for debugging)
-header("Access-Control-Allow-Origin: *"); // Change to specific origin later
+header("Access-Control-Allow-Origin: https://seniorcare-flt3.onrender.com"); // Change to specific origin later
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
